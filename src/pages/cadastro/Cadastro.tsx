@@ -1,11 +1,15 @@
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState, type ChangeEvent } from "react";
-import type Usuario from "../models/Usuario";
+import { ClipLoader } from "react-spinners";
+import type Usuario from "../../models/Usuario";
+import { cadastrarUsuario } from "../../services/Service";
 function Cadastro() {
 
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const [confirmarSenha, setConfirmarSenha] = useState<string>("");
 
     const [usuario, setUsuario] = useState<Usuario>({
         id: 0,
@@ -15,7 +19,15 @@ function Cadastro() {
         foto: ""
     });
 
-    const [confirmarSenha, setConfirmarSenha] = useState<string>("");
+    useEffect(() => {
+      if (usuario.id !== 0) {
+        retornar()
+      }
+    }, [usuario]);
+
+    function retornar() {
+      navigate("/");
+    }
 
     function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
         setUsuario({
@@ -28,8 +40,26 @@ function Cadastro() {
         setConfirmarSenha(e.target.value);
     }
 
-    console.log(JSON.stringify(usuario));
-    console.log(confirmarSenha);
+    async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault()
+
+      if(confirmarSenha === usuario.senha && usuario.senha.length >= 8) {
+        setIsLoading(true);
+        
+        try {
+          await cadastrarUsuario(`/usuarios/cadastrar`, usuario, setUsuario);
+          alert("Usuario cadastrado com sucesso!");
+        } catch (error) {
+          alert("Erro ao cadastrar usuario!");
+        }
+      } else {
+        alert("Dados do usuário inconsistentes! Verifique as informações de cadastro.");
+        setUsuario({ ...usuario, senha: "" });
+        setConfirmarSenha("");
+      }
+
+      setIsLoading(false);
+    }
 
     return (
         <>
@@ -39,7 +69,8 @@ function Cadastro() {
           className="bg-[url('https://i.imgur.com/ZZFAmzo.jpg')] lg:block hidden bg-no-repeat
                 w-full min-h-screen bg-cover bg-center"
         ></div>
-        <form className='flex justify-center items-center flex-col w-2/3 gap-3' >
+        <form className='flex justify-center items-center flex-col w-2/3 gap-3'
+         onSubmit={cadastrarNovoUsuario}>
           <h2 className='text-slate-900 text-5xl'>Cadastrar</h2>
           <div className="flex flex-col w-full">
             <label htmlFor="nome">Nome</label>
@@ -50,6 +81,7 @@ function Cadastro() {
               placeholder="Nome"
               className="border-2 border-slate-700 rounded p-2"
               value={usuario.nome}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
             />
           </div>
           <div className="flex flex-col w-full">
@@ -61,6 +93,7 @@ function Cadastro() {
               placeholder="Usuario"
               className="border-2 border-slate-700 rounded p-2"
               value={usuario.usuario}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
             />
           </div>
           <div className="flex flex-col w-full">
@@ -72,6 +105,7 @@ function Cadastro() {
               placeholder="Foto"
               className="border-2 border-slate-700 rounded p-2"
               value={usuario.foto}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
             />
           </div>
           <div className="flex flex-col w-full">
@@ -102,6 +136,7 @@ function Cadastro() {
             <button
               type='reset'
               className='rounded text-white bg-red-400 hover:bg-red-700 w-1/2 py-2'
+              onClick={retornar}
             >
               Cancelar
             </button>
@@ -111,7 +146,9 @@ function Cadastro() {
                     hover:bg-indigo-900 w-1/2 py-2
                     flex justify-center'
             >
-              Cadastrar
+              {isLoading ? <ClipLoader color="#ffffff" size={24} /> : 
+              <span>Cadastrar</span>
+              }
             </button>
           </div>
         </form>
