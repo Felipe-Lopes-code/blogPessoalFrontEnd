@@ -54,9 +54,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 alert("Erro ao autenticar o usuário! Verifique a conexão com a API!")
             }
  
-        } finally {
-            setIsLoading(false);
         }
+        setIsLoading(false);
        
     }
  
