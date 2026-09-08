@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DeletarPostagem from './components/postagem/deletarpostagem/DeletarPostagem';
 import { AuthProvider } from './contexts/AuthContext';
 import Footer from './components/footer/Footer';
 import Navbar from './components/navbar/Navbar';
@@ -10,6 +11,7 @@ import FormTema from './components/tema/formtema/FormTema';
 import DeletarTema from './components/tema/deletartema/DeletarTema';
 import ListaPostagens from './components/postagem/listapostagens/ListaPostagem';
 import FormPostagem from './components/postagem/formpostagem/FormPostagem';
+import Perfil from './pages/perfil/Perfil';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
               <Route path="/postagens" element={<ListaPostagens />} />
               <Route path="/cadastrarpostagem" element={<FormPostagem />} />
               <Route path="/editarpostagem/:id" element={<FormPostagem />} />
+              <Route path="/deletarpostagem/:id" element={<DeletarPostagem />} />
+              <Route path="/perfil" element={<Perfil />} />
             </Routes>
           </div>
           <Footer />
