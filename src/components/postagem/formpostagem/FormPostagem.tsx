@@ -84,7 +84,7 @@ function FormPostagem() {
         });
     }, [tema]);
 
-    function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
+    function atualizarEstado(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         setPostagem({
             ...postagem,
             [e.target.name]: e.target.value,
@@ -152,13 +152,12 @@ function FormPostagem() {
                 <div className="flex flex-col gap-2">
                     <label htmlFor="texto">Texto da Postagem</label>
                     <textarea
-                        type="text"
                         placeholder="Texto"
                         name="texto"
                         required
                         className="border-2 border-slate-700 rounded p-2"
                         value={postagem.texto}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => atualizarEstado(e)}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -166,22 +165,24 @@ function FormPostagem() {
                     <select name="tema" id="tema" className="border border-slate-800 rounded p-2"
                         onChange={(e) => buscarTemaPorId(e.currentTarget.value)}
                     >
-                        <option value="" selected disabled>Selecione um tema</option>
+                        <option value="" disabled>Selecione um tema</option>
 
                         {temas.map((tema) => (
                             <>
-                                <option value={tema.id}>{tema.descricao}</option>
+                                <option key={tema.id} value={tema.id}>
+                                    {tema.descricao}
+                                </option>
                             </>
                         ))}
                     </select>
                 </div>
 
                 <button type="submit" className="rounded disabled:bg-slate-200 bg-indigo-400 hover:bg-indigo-800 text-white font-bold w-1/2 mx-auto py-2 flex justify-center" disabled={carregandoTema}>
-                        {isLoading ?
-                            <ClipLoader size={24} color="#ffffff" />
-                            :
-                            <span>{id === undefined ? "Cadastrar" : "Editar"}</span>
-                        }
+                    {isLoading ?
+                        <ClipLoader size={24} color="#ffffff" />
+                        :
+                        <span>{id === undefined ? "Cadastrar" : "Editar"}</span>
+                    }
                 </button>
             </form>
         </div>
