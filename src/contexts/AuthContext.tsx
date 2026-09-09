@@ -1,7 +1,7 @@
 import { createContext, useState, type ReactNode } from "react";
 import type UsuarioLogin from "../models/UsuarioLogin";
 import { login } from "../services/Service";
-import axios from "axios";
+import { ToastAlerta } from "../utils/ToastAlerta";
  
 // Definir os Estados e Funções disponibilizadas pela Context
 interface AuthContextProps{
@@ -44,16 +44,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
  
         try {
             await login(`/usuarios/logar`, usuarioLogin, setUsuario);
-            alert("Usuário Autenticado com sucesso!")
+            ToastAlerta("Usuário foi autenticado com sucesso!", "success")
  
         } catch(error) {
-            if (axios.isAxiosError(error) && error.response) {
-                alert(`Erro ao autenticar o usuário: ${error.response.status}`);
-                console.log("Resposta da API: ", error.response.data)
-            } else {
-                alert("Erro ao autenticar o usuário! Verifique a conexão com a API!")
-            }
- 
+            ToastAlerta("Os dados do Usuário estão inconsistentes!", "error")
         }
         setIsLoading(false);
        
